@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "138451545848",
+    "firebase_url": "https://attend-it-7255c-default-rtdb.firebaseio.com",
+    "project_id": "attend-it-7255c",
+    "storage_bucket": "attend-it-7255c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:138451545848:android:f986e30318fb0a4c3e550d",
+        "android_client_info": {
+          "package_name": "com.example.attendit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "138451545848-3urd40vr8o2hb2p9j7pa5p3irbppfue6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.attendit",
+            "certificate_hash": "3f0c0cafa7faea6bd374b946d94de9c23092b200"
+          }
+        },
+        {
+          "client_id": "138451545848-vuba4ioro1amogpfgg51t9l0vr0pnqve.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAYW_lnT0j90A88N-VoSsk39ycCuXTjC8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "138451545848-vuba4ioro1amogpfgg51t9l0vr0pnqve.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "138451545848-e5oot6q4t208ebb5e7bsp45uhs559b4e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.attendit"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
