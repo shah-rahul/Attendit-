@@ -33,55 +33,69 @@ class APIs {
     return false;
   }
 
-  void markOfflineAttendance(Position pos, str, rollNumber, name) async {
+  /// 0 - success
+  /// 100 - too far from class
+  Future<int> markOfflineAttendance(Position pos, str, rollNumber, name) async {
     print('offline attendance called');
     List<String> arr = splitter(str);
+    // if (await tellDiff(int.parse(arr[4])) == false) {
+    //   return (101);
+    //   // Too late
+    // }
     int counter = 0;
     if (tellDistance(pos, double.parse(arr[5]), double.parse(arr[6]))) {
-    await database
-        .child('attend-it')
-        .child(arr[0])
-        .child('attendance')
-        .child(arr[1])
-        .child(arr[2])
-        .child(arr[3])
-        .child(arr[4])
-        .child(rollNumber)
-        .get()
-        .then((value) {
-      if (value.value == null) {
-        counter = 1;
-      } else {
-        var data = value.value as Map;
-        if (data['counter'] == null || data['counter'] == 0) {
+      await database
+          .child('attend-it')
+          .child(arr[0])
+          .child('attendance')
+          .child(arr[1])
+          .child(arr[2])
+          .child(arr[3])
+          .child(arr[4])
+          .child(rollNumber)
+          .get()
+          .then((value) {
+        if (value.value == null) {
           counter = 1;
         } else {
-          counter = data['counter'];
+          var data = value.value as Map;
+          if (data['counter'] == null || data['counter'] == 0) {
+            counter = 1;
+          } else {
+            counter = data['counter'];
+          }
         }
-      }
-    });
-    database
-        .child('attend-it')
-        .child(arr[0])
-        .child('attendance')
-        .child(arr[1])
-        .child(arr[2])
-        .child(arr[3])
-        .child(arr[4])
-        .child(rollNumber)
-        .set({
-      "counter": counter + 1,
-      "rollno": rollNumber,
-      "name": name,
-    });
+      });
+      database
+          .child('attend-it')
+          .child(arr[0])
+          .child('attendance')
+          .child(arr[1])
+          .child(arr[2])
+          .child(arr[3])
+          .child(arr[4])
+          .child(rollNumber)
+          .set({
+        "counter": counter + 1,
+        "rollno": rollNumber,
+        "name": name,
+      });
+      return (0);
     }
+    return (100);
+    // TOO FAR FROM CLASS
   }
 
-  void markOnlineAttendance(str, rollNumber, name) async {
+  ///  0 - success
+  ///  101 - too late
+  Future<int> markOnlineAttendance(str, rollNumber, name) async {
     print("called");
     var arr = splitter(str);
     int counter = 0;
-    // if (await tellDiff(int.parse(arr[4]))) {
+    if (await tellDiff(int.parse(arr[4])) == false) {
+      return (101);
+      // Too late
+    }
     await database
         .child('attend-it')
         .child(arr[0])
@@ -118,6 +132,6 @@ class APIs {
       "rollno": rollNumber,
       "name": name,
     });
-    // }
+    return (0);
   }
 }

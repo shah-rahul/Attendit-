@@ -113,14 +113,75 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  void apiCall(Barcode link) {
+  void apiCall(Barcode link) async {
     try {
+      int attendanceStatus = 1;
+      print("Trying attendance");
       if (apis.splitter(link.code).length == 6) {
-        apis.markOnlineAttendance(link.code, rollNumber, name);
+        attendanceStatus =
+            await apis.markOnlineAttendance(link.code, rollNumber, name);
       } else {
-        apis.markOfflineAttendance(userLocation, link.code, rollNumber, name);
+        attendanceStatus = await apis.markOfflineAttendance(
+            userLocation, link.code, rollNumber, name);
+      }
+      print("Attendace status: $attendanceStatus");
+      if (attendanceStatus == 0) {
+        // alert dialog success
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Success"),
+                content: Text("Attendance marked successfully"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      } else if (attendanceStatus == 100) {
+        // alert error "Too far from class"
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Error"),
+                content: Text("You are too far from class to mark attendance!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      } else if (attendanceStatus == 101) {
+        // alert error "Too far from class"
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Error"),
+                content: Text("You are too late for attendance!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
       }
     } catch (e) {
+      print("ERROR");
       print(e);
     }
   }
