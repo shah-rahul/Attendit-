@@ -16,6 +16,7 @@ class APIs {
     _curr = await NTP.now();
     _providedDate = DateTime.fromMillisecondsSinceEpoch(providedDate);
     int scanTime = _curr.difference(_providedDate).inSeconds;
+    print(scanTime);
     if (scanTime <= 60) {
       return true;
     }
@@ -43,7 +44,7 @@ class APIs {
     //   // Too late
     // }
     int counter = 0;
-    if (tellDistance(pos, double.parse(arr[5]), double.parse(arr[6]))) {
+    if (tellDistance(pos, double.parse(arr[6]), double.parse(arr[7]))) {
       await database
           .child('attend-it')
           .child(arr[0])
@@ -92,7 +93,7 @@ class APIs {
     print("called");
     var arr = splitter(str);
     int counter = 0;
-    if (await tellDiff(int.parse(arr[4])) == false) {
+    if (await tellDiff(int.parse(arr[5])) == false) {
       return (101);
       // Too late
     }

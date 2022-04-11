@@ -115,6 +115,9 @@ class _HomePageState extends State<HomePage> {
 
   void apiCall(Barcode link) async {
     try {
+      apis.splitter(link.code).forEach((element) {
+        print(element);
+      });
       int attendanceStatus = 1;
       print("Trying attendance");
       if (apis.splitter(link.code).length == 6) {
