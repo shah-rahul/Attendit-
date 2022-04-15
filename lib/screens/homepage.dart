@@ -1,8 +1,11 @@
 import 'package:attendit/apis.dart';
+import 'package:attendit/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,6 +27,94 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     controller?.dispose();
     super.dispose();
+  }
+
+  void showBottomModal(status, arr, notifyParent) async {
+    final result = await showSlidingBottomSheet(context, builder: (context1) {
+      return SlidingSheetDialog(
+          elevation: 8,
+          cornerRadius: 16,
+          footerBuilder: (context1, state) {
+            return Material(
+              child: GestureDetector(
+                onTap: () {
+                  status == 0 ? notifyParent() : "maa chuda";
+                },
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  margin:
+                      const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                  decoration: BoxDecoration(
+                      color: status == 0 ? blue : Colors.red,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10))),
+                  child: Center(
+                    child: Text(
+                      //switch with three parameteres
+                      status == 0
+                          ? "Mark Another attendance"
+                          : status == 100
+                              ? "Too Far From Class"
+                              : "Too Late for attendance",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                          color: whiteshade),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [0.4, 0.7, 1.0],
+            positioning: SnapPositioning.relativeToAvailableSpace,
+          ),
+          builder: (context1, state) {
+            return Material(
+              child: Container(
+                  padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: Column(
+                    children: [
+                      Text("Your Attendance for" + " " + arr[3],
+                          style: GoogleFonts.roboto(
+                              textStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold))),
+                      Row(
+                        children: [
+                          Text("of" + " " + arr[2] + " " + arr[1],
+                              style: GoogleFonts.roboto(
+                                  textStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                              ))),
+                        ],
+                      ),
+                      Center(
+                        child: Text(
+                          //switch with three parameteres
+                          status == 0
+                              ? "Attendance Marked Successfully"
+                              : status == 100
+                                  ? "Attendace Marked Successfully"
+                                  : "Attendace Not Marked",
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  )),
+            );
+          });
+    });
   }
 
   Future<Position> _determinePosition() async {
@@ -113,6 +204,10 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
+  notifyparent() {
+    setState(() {});
+  }
+
   void apiCall(Barcode link) async {
     try {
       apis.splitter(link.code).forEach((element) {
@@ -127,62 +222,9 @@ class _HomePageState extends State<HomePage> {
         attendanceStatus = await apis.markOfflineAttendance(
             userLocation, link.code, rollNumber, name);
       }
+      showBottomModal(attendanceStatus, apis.splitter(link.code), notifyparent);
+
       print("Attendace status: $attendanceStatus");
-      if (attendanceStatus == 0) {
-        // alert dialog success
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("Success"),
-                content: Text("Attendance marked successfully"),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("OK"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            });
-      } else if (attendanceStatus == 100) {
-        // alert error "Too far from class"
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("Error"),
-                content: Text("You are too far from class to mark attendance!"),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("OK"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            });
-      } else if (attendanceStatus == 101) {
-        // alert error "Too far from class"
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("Error"),
-                content: Text("You are too late for attendance!"),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("OK"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            });
-      }
     } catch (e) {
       print("ERROR");
       print(e);
